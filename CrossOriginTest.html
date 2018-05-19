@@ -1,0 +1,76 @@
+<html>
+<head>
+    <title>Test CORS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        html, body, h1, h2, h3, h4, h5, h6 {
+            font-family: "Roboto", sans-serif;
+        }
+    </style>
+    <script type="text/javascript" src="CrossOriginScript.js"></script>
+</head>
+<body id="target">
+<div class="w3-row w3-padding-64 w3-center">
+    <h1 class="w3-text-blue">Test CORS</h1>
+</div>
+<div class="w3-row w3-padding-64 w3-container">
+    <h3 class="w3-text-blue">Parameters</h3>
+    <table class="w3-table">
+        <tr>
+            <td width="30%"><label for="url">URI path: </label></td>
+            <td width="70%"><input class="w3-input w3-border-black" id="url" type="text"/></td>
+        </tr>
+        <tr>
+            <td width="30%"><label for="cookie">Include cookie with the request </label></td>
+            <td width="70%"><input class="w3-check" id="cookie" type="checkbox"/></td>
+        </tr>
+        <tr>
+            <td width="30%"><label for="old">Check if using an old browser </label></td>
+            <td width="70%"><input class="w3-check" id="old" type="checkbox"/></td>
+        </tr>
+        <tr>
+            <td width="30%"><label for="socket">Use websockets </label></td>
+            <td width="70%"><input class="w3-check" id="socket" type="checkbox"/></td>
+        </tr>
+    </table>
+</div>
+<div class="w3-row w3-padding-64">
+    <div class="w3-twothird w3-container">
+        <h3 class="w3-text-blue">Get call will make a cross domain request, but no preflight request.</h3>
+    </div>
+    <div class="w3-third w3-container">
+        <input class="w3-button w3-padding-large w3-padding-32 w3-center w3-theme-light" id="get" type="button" value="Do A Get Call"
+               onclick="doGet();"/>
+    </div>
+</div>
+<div class="w3-row w3-padding-64">
+    <div class="w3-twothird w3-container">
+        <h3 class="w3-text-blue">Post call (Cache age is 1 minute)</h3>
+        <label for="content">Application/json content type (Makes a preflight request) </label>
+        <input class="w3-check" id="content" type="checkbox"/>
+    </div>
+    <div class="w3-third w3-container">
+        <input class="w3-button w3-padding-large w3-padding-32 w3-center w3-theme-light" id="post" type="button" value="Do A Post Call"
+               onclick="doPost();"/>
+    </div>
+</div>
+<div class="w3-row w3-padding-64">
+    <div class="w3-twothird w3-container">
+        <h3 class="w3-text-blue">Delete call. This is not allowed by the server.</h3>
+    </div>
+    <div class="w3-third w3-container">
+        <input class="w3-button w3-padding-large w3-padding-32 w3-center w3-theme-light" id="delete" type="button" value="Do A Delete Call"
+               onclick="doDelete();"/>
+    </div>
+</div>
+<div class="w3-row w3-padding-64 w3-center">
+    <label>To test same-origin requests, click <a class="w3-text-blue" href="http://jws200028x.mail.ne1.yahoo.com/CrossOriginTest.html">here</a>
+    </label>
+</div>
+</body>
+</html>
