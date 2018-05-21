@@ -1,3 +1,4 @@
+
 <html>
 <head>
     <title>Test CORS</title>
@@ -22,8 +23,8 @@
     <h3 class="w3-text-blue">Parameters</h3>
     <table class="w3-table">
         <tr>
-            <td width="30%"><label for="url">URI path: </label></td>
-            <td width="70%"><input class="w3-input w3-border-black" id="url" type="text"/></td>
+            <td width="30%"><label for="wss">WSS id: </label></td>
+            <td width="70%"><input class="w3-input w3-border-black" id="wss" type="text"/></td>
         </tr>
         <tr>
             <td width="30%"><label for="cookie">Include cookie with the request </label></td>
@@ -34,17 +35,18 @@
             <td width="70%"><input class="w3-check" id="old" type="checkbox"/></td>
         </tr>
         <tr>
-            <td width="30%"><label for="socket">Use websockets </label></td>
-            <td width="70%"><input class="w3-check" id="socket" type="checkbox"/></td>
+            <td width="30%"><label for="prod">Use production </label></td>
+            <td width="70%"><input class="w3-check" id="prod" type="checkbox"/></td>
         </tr>
     </table>
 </div>
 <div class="w3-row w3-padding-64">
     <div class="w3-twothird w3-container">
-        <h3 class="w3-text-blue">Get call will make a cross domain request, but no preflight request.</h3>
+        <h3 class="w3-text-blue">Get call.</h3>
+        <label for="get">Will make a cross domain request, but no preflight request.</label>
     </div>
     <div class="w3-third w3-container">
-        <input class="w3-button w3-padding-large w3-padding-32 w3-center w3-theme-light" id="get" type="button" value="Do A Get Call"
+        <input class="w3-button w3-padding-large w3-padding-32 w3-center w3-theme-light" id="get" type="button" value="Do A Get Mailboxes Call"
                onclick="doGet();"/>
     </div>
 </div>
@@ -54,18 +56,33 @@
         <label for="content">Application/json content type (Makes a preflight request) </label>
         <input class="w3-check" id="content" type="checkbox"/>
     </div>
+    <div class="w3-twothird w3-container">
+        <label for="mailbox">Mailbox ID: </label>
+        <input class="w3-input w3-border-black" id="mailbox" type="text"/>
+    </div>
     <div class="w3-third w3-container">
-        <input class="w3-button w3-padding-large w3-padding-32 w3-center w3-theme-light" id="post" type="button" value="Do A Post Call"
+        <input class="w3-button w3-padding-large w3-padding-32 w3-center w3-theme-light" id="post" type="button" value="Do A Post Save Message Call"
                onclick="doPost();"/>
     </div>
 </div>
 <div class="w3-row w3-padding-64">
     <div class="w3-twothird w3-container">
-        <h3 class="w3-text-blue">Delete call. This is not allowed by the server.</h3>
+        <h3 class="w3-text-blue">Delete call.</h3>
+        <label for="delete">This is not allowed by the server.</label>
     </div>
     <div class="w3-third w3-container">
         <input class="w3-button w3-padding-large w3-padding-32 w3-center w3-theme-light" id="delete" type="button" value="Do A Delete Call"
                onclick="doDelete();"/>
+    </div>
+</div>
+<div class="w3-row w3-padding-64">
+    <div class="w3-twothird w3-container">
+        <h3 class="w3-text-blue">Websocket test.</h3>
+        <label for="socket">Points to test-apis (Should not be treated as CORS)</label>
+    </div>
+    <div class="w3-third w3-container">
+        <input class="w3-button w3-padding-large w3-padding-32 w3-center w3-theme-light" id="socket" type="button" value="Do A Websockets Test"
+               onclick="WebSocketTest();"/>
     </div>
 </div>
 <div class="w3-row w3-padding-64 w3-center">
