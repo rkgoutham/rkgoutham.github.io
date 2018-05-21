@@ -116,7 +116,8 @@ function doPost() {
     }
 
     var data = new FormData();
-    data.append("json", JSON.stringify(payload));
+    // data.append("json", JSON.stringify(payload));
+    data.append("json", payload);
     var isJson = document.getElementById("content").checked;
     var headers = {};
     if (isJson) {
