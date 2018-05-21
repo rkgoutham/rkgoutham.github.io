@@ -123,7 +123,7 @@ function doPost() {
     if (isJson) {
         headers = {
             Accept: 'application/json',
-            Content-Type: 'application/json'
+            'Content-Type': 'application/json'
         }
     }
     var params = {
