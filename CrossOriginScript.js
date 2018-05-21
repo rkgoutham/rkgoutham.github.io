@@ -1,66 +1,39 @@
+/**
+ * Method to do a GET on mailboxes API.
+ */
 function doGet() {
-    var path = document.getElementById("url").value;
-    if (path === '') {
-        alert("URI path should not be empty");
-        return;
+    var isBrowserOld = document.getElementById("old").checked;
+    if (!isBrowserOld) {
+        var params = {
+            mode: 'cors'
+        };
+        addCredentials(params);
+        fetch(getUrl(), params).then(logResponse).then(logJson).catch(logError);
+    } else {
+        createCORSOldBrowserRequest('GET', getUrl());
     }
-    var headers = {};
-    var params = {
-        mode: 'cors',
-        headers: headers
-    };
-
-    var cookie = document.getElementById("cookie").value;
-    if (cookie !== '') {
-        headers.Cookie = cookie;
-        params.credentials = 'include';
-    }
-
-    fetch("https://test-apis-12.mail.yahoo.com" + path, params)
-        .then(function (response) {
-            console.log('Content-Type: ' + response.headers.get('Content-Type'));
-            console.log('Status: ' + response.status);
-            console.log('Status-Text: ' + response.statusText);
-            console.log('Type: ' + response.type);
-            console.log('URL ' + response.url);
-        })
-        .catch(function (error) {
-            console.log(error.message);
-        });
 }
 
+/**
+ * Method to do a DELETE call on mailboxes API.
+ */
 function doDelete() {
-    var path = document.getElementById("url").value;
-    if (path === '') {
-        alert("URI path should not be empty");
-        return;
+    var isBrowserOld = document.getElementById("old").checked;
+    if (!isBrowserOld) {
+        var params = {
+            mode: 'cors',
+            method: "DELETE"
+        };
+        addCredentials(params);
+        fetch(getUrl(), params).then(logResponse).then(logJson).catch(logError);
+    } else {
+        createCORSOldBrowserRequest('DELETE', getUrl());
     }
-    var headers = {};
-    var params = {
-        mode: 'cors',
-        method: "DELETE",
-        headers: headers
-    };
-
-    var cookie = document.getElementById("cookie").value;
-    if (cookie !== '') {
-        headers.Cookie = cookie;
-        params.credentials = 'include';
-    }
-
-    fetch("https://test-apis-12.mail.yahoo.com" + path, params)
-        .then(function (response) {
-            console.log('Content-Type: ' + response.headers.get('Content-Type'));
-            console.log('Status: ' + response.status);
-            console.log('Status-Text: ' + response.statusText);
-            console.log('Type: ' + response.type);
-            console.log('URL ' + response.url);
-        })
-        .catch(function (error) {
-            console.log(error.message);
-        });
 }
 
+/**
+ * Method to do a post save message call.
+ */
 function doPost() {
     var payload = {
         actions: {
@@ -109,54 +82,179 @@ function doPost() {
         }
     };
 
-    var path = document.getElementById("url").value;
-    if (path === '') {
-        alert("URI path should not be empty");
-        return;
+    var data = new FormData();
+    data.append("json", JSON.stringify(payload));
+    var isJson = document.getElementById("content").checked;
+    var isBrowserOld = document.getElementById("old").checked;
+    if (!isBrowserOld) {
+        var headers = {};
+        if (isJson) {
+            headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }
+        var params = {
+            mode: 'cors',
+            method: "POST",
+            body: data,
+            headers: headers
+        };
+        addCredentials(params);
+
+        var path = '/@id==' + document.getElementById("mailbox").value + '/messages';
+        fetch(getUrl(path), params)
+            .then(logResponse).then(logJson).catch(logError);
+    } else {
+        createCORSOldBrowserRequest('POST', url, isJson, data);
+    }
+}
+
+/**
+ * Method to so a sample websocket call.
+ */
+function WebSocketTest() {
+    if ("WebSocket" in window) {
+        var url = 'ws://jws200028x.mail.ne1.yahoo.com/ws/v3/mailboxes?appid=yahoomailneo';
+        var wss = document.getElementById("wss").value;
+        if (wss !== '') {
+            url += '&wssid=' + wss;
+        }
+        // Let us open a web socket
+        var ws = new WebSocket(url);
+
+        ws.onopen = function () {
+            // Web Socket is connected, send data using send()
+            ws.send("Message to send");
+            console.log("Message is sent...");
+        };
+        ws.onmessage = function (evt) {
+            var received_msg = evt.data;
+            console.log("Message is received..." + received_msg);
+        };
+        ws.onclose = function () {
+            // websocket is closed.
+            console.log("Connection is closed...");
+        };
+    } else {
+        // The browser doesn't support WebSocket
+        console.log("WebSocket NOT supported by your Browser!");
+    }
+}
+
+/**
+ * Creates cross domain request using {XMLHttpRequest} for older browsers that do not support fetch.
+ *
+ * @param method HTTP method to use.
+ * @param url URL to call.
+ * @param preflight Whether a preflight request.
+ * @param data JSON payload.
+ */
+function createCORSOldBrowserRequest(method, url, preflight, data) {
+    var xhr = new XMLHttpRequest();
+    if ("withCredentials" in xhr) {
+        // Check if the XMLHttpRequest object has a "withCredentials" property.
+        // "withCredentials" only exists on XMLHTTPRequest2 objects.
+        xhr.open(method, url, true);
+    } else if (typeof XDomainRequest != "undefined") {
+        // Otherwise, check if XDomainRequest.
+        // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+        xhr = new XDomainRequest();
+        xhr.open(method, url);
+
+    } else {
+        // Otherwise, CORS is not supported by the browser.
+        console.log('CORS not supported');
     }
 
-    var data = new FormData();
-    // data.append("json", JSON.stringify(payload));
-    data.append("json", payload);
-    var isJson = document.getElementById("content").checked;
-    var headers = {};
-    if (isJson) {
-        headers = {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-        }
-    }
-    var params = {
-        mode: 'cors',
-        method: "POST",
-        body: data,
-        headers: headers
+    // Response handlers.
+    xhr.onload = function () {
+        var text = xhr.responseText;
+        console.log('Response from CORS request to ' + url + ': ' + text);
     };
 
-    var cookie = document.getElementById("cookie").value;
-    if (cookie !== '') {
-        headers.Cookie = cookie;
+    xhr.onerror = logError;
+    var hasCookie = document.getElementById("cookie").checked;
+    if (hasCookie) {
+        xhr.withCredentials = true;
+    }
+    if (preflight) {
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+    }
+    xhr.send(data);
+}
+
+/**
+ * Gets url based on production checkbox, path and wss id provided.
+ *
+ * @param path Path to append after mailboxes path. Null means the url will be mailboxes path.
+ * @returns {string}
+ */
+function getUrl(path) {
+    var isProd = document.getElementById("prod").checked;
+    var wss = document.getElementById("wss").value;
+    var url = null;
+    if (isProd) {
+        url = 'https://apis.mail.yahoo.com/ws/v3/mailboxes';
+    } else {
+        url = 'https://test-apis-12.mail.yahoo.com/ws/v3/mailboxes';
+    }
+    if (path != undefined) {
+        url += path;
+    }
+    url += '?appid=yahoomailneo';
+    if (wss !== '') {
+        url += '&wssid=' + wss;
+    }
+    return url;
+}
+
+/**
+ * Logs response metadata in fetch call.
+ *
+ * @param response Response object.
+ * @returns {Promise} as json.
+ */
+function logResponse(response) {
+    if (response) {
+        console.log('Content-Type: ' + response.headers.get('Content-Type'));
+        console.log('Status: ' + response.status);
+        console.log('Status-Text: ' + response.statusText);
+        console.log('Type: ' + response.type);
+        console.log('URL: ' + response.url);
+        return response.json();
+    }
+}
+
+/**
+ * Logs content as json. Chained after logResponse.
+ *
+ * @param json JSON object.
+ */
+function logJson(json) {
+    if (json) {
+        console.log('Content: ' + JSON.stringify(json));
+    }
+}
+
+/**
+ * Logs error in console.
+ *
+ * @param error Error object.
+ */
+function logError(error) {
+    console.log(error.message);
+}
+
+/**
+ * Adds cookie credentials to the fetch request if cookie checkbox is checked.
+ *
+ * @param params fetch params.
+ */
+function addCredentials(params) {
+    var hasCookie = document.getElementById("cookie").checked;
+    if (hasCookie) {
         params.credentials = 'include';
     }
-
-    fetch("https://test-apis-12.mail.yahoo.com" + path, params)
-        .then(function (response) {
-            console.log('Content-Type: ' + response.headers.get('Content-Type'));
-            console.log('Status: ' + response.status);
-            console.log('Status-Text: ' + response.statusText);
-            console.log('Type: ' + response.type);
-            console.log('URL ' + response.url);
-        })
-        .then(function (response) {
-            if (response) {
-                console.log('Content-Type: ' + response.headers.get('Content-Type'));
-                console.log('Status: ' + response.status);
-                console.log('Status-Text: ' + response.statusText);
-                console.log('Type: ' + response.type);
-                console.log('URL ' + response.url);
-            }
-        })
-        .catch(function (error) {
-            console.log(error.message);
-        });
 }
