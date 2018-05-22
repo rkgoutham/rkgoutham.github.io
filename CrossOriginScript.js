@@ -62,12 +62,12 @@ function doPost() {
             newMessage: true,
             csid: "csid1505770544349",
             folder: {
-                id: "3"
+                id: "1"
             },
             headers: {
                 subject: "This is a message for \ufe8e\ufee0\ufecb\ufeae\ufe92\ufef3\ufe93 and \u4e0d\u7720\u7684\u5c0f\u9e1f",
                 from: [{
-                    name: "\ufe8e\ufee0\ufecb\ufeae\ufe92\ufef3\ufe93",
+                    name: "Goutham",
                     email: "goutham.rk@yahoo.com"
                 }],
                 to: [{
@@ -75,8 +75,8 @@ function doPost() {
                     email: "altestacct@yahoo.com"
                 }],
                 replyTo: [{
-                    name: "\ufe8e\ufee0\ufecb\ufeae\ufe92\ufef3\ufe93",
-                    email: "altestacct@yahoo.com"
+                    name: "Goutham",
+                    email: "goutham.rk@yahoo.com"
                 }]
             }
         }
