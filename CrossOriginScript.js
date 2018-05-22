@@ -50,7 +50,7 @@ function doPost() {
             saveWithCardDate: false,
             saveWithSkippedSchedule: false,
             applyForward: false,
-            applySaveFromAddressCheck: true,
+            applySaveFromAddressCheck: false,
             saveWithUidl: false,
             applyMoveInSendMessage: true,
             wireTapSkipValidation: false
@@ -90,8 +90,8 @@ function doPost() {
         var headers = {};
         if (isJson) {
             headers = {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
             }
         }
         var params = {
