@@ -91,13 +91,13 @@ function doPost() {
         if (isJson) {
             headers = {
                 Accept: 'application/json',
-                'Content-Type': 'application/json; charset=utf-8'
+                'Content-Type': 'application/json'
             }
         }
         var params = {
             mode: 'cors',
-            method: "POST",
-            body: data,
+            method: 'POST',
+            body: JSON.stringify(payload),
             headers: headers
         };
         addCredentials(params);
