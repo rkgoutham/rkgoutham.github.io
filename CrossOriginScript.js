@@ -68,7 +68,7 @@ function doPost() {
                 subject: "This is a message for \ufe8e\ufee0\ufecb\ufeae\ufe92\ufef3\ufe93 and \u4e0d\u7720\u7684\u5c0f\u9e1f",
                 from: [{
                     name: "\ufe8e\ufee0\ufecb\ufeae\ufe92\ufef3\ufe93",
-                    email: "altestacct@yahoo.com"
+                    email: "goutham.rk@yahoo.com"
                 }],
                 to: [{
                     name: "\ufe8e\ufee0\ufecb\ufeae\ufe92\ufef3\ufe93",
