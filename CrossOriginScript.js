@@ -115,7 +115,7 @@ function doPost() {
  */
 function WebSocketTest() {
     if ("WebSocket" in window) {
-        var url = 'ws://jws200028x.mail.ne1.yahoo.com/ws/v3/mailboxes?appid=yahoomailneo';
+        var url = 'wss://jws200028x.mail.ne1.yahoo.com/ws/v3/mailboxes?appid=yahoomailneo';
         var wss = document.getElementById("wss").value;
         if (wss !== '') {
             url += '&wssid=' + wss;
