@@ -1,4 +1,3 @@
-
 <html>
 <head>
     <title>Test CORS</title>
@@ -15,34 +14,58 @@
     </style>
     <script type="text/javascript" src="CrossOriginScript.js"></script>
 </head>
-<body id="target">
+<body>
 <div class="w3-row w3-padding-64 w3-center">
     <h1 class="w3-text-blue">Test CORS</h1>
 </div>
-<div class="w3-row w3-padding-64 w3-container">
+<div class="w3-row w3-padding-large w3-hide" id="output">
+    <h3 class="w3-text-blue">Output</h3>
+    <pre id="json" class="w3-text-red"></pre>
+    <a class="w3-text-blue" href="javascript:hideOutput();">Hide</a>
+</div>
+<br>
+<i class="w3-padding-large">
+    Click "Get WSS ID" and select "Include cookie" checkbox to get "wssid" and enter into form. After that you enter appropriate parameters and click
+    the type of call to make.
+</i>
+<br><br><br>
+<div class="w3-row w3-padding-large w3-container">
     <h3 class="w3-text-blue">Parameters</h3>
     <table class="w3-table">
         <tr>
-            <td width="30%"><label for="wss">WSS id: </label></td>
-            <td width="70%"><input class="w3-input w3-border-black" id="wss" type="text"/></td>
+            <td width="30%"><label for="wss">WSS ID: </label></td>
+            <td width="40%"><input class="w3-input w3-border-black" id="wss" type="text" autocomplete="on"/></td>
+            <td width="30%">
+                <input class="w3-button w3-padding-large w3-center w3-theme-light" id="getWss" type="button" value="Get WSS ID"
+                       onclick="getWssId();"/>
+            </td>
         </tr>
         <tr>
             <td width="30%"><label for="cookie">Include cookie with the request </label></td>
-            <td width="70%"><input class="w3-check" id="cookie" type="checkbox"/></td>
+            <td colspan="2" width="70%"><input class="w3-check" id="cookie" type="checkbox"/></td>
         </tr>
         <tr>
             <td width="30%"><label for="old">Check if using an old browser </label></td>
-            <td width="70%"><input class="w3-check" id="old" type="checkbox"/></td>
+            <td colspan="2" width="70%"><input class="w3-check" id="old" type="checkbox"/></td>
         </tr>
         <tr>
             <td width="30%"><label for="prod">Use production </label></td>
-            <td width="70%"><input class="w3-check" id="prod" type="checkbox"/></td>
+            <td colspan="2" width="70%"><input class="w3-check" id="prod" type="checkbox"/></td>
         </tr>
     </table>
 </div>
+<hr style="border-width: thick">
+<pre>
+    After obtaining WSS ID, try any one of these requests below. Make sure to first do the following:
+
+        1. Right click anywhere inside the page and select "Inspect".
+        2. Once developer tools are open, select the network tab
+        3. Try out any request below and observe the additional entries popup in the network tab. Make sure "Include cookie" is selected to authorize.
+        4. Click on one of those requests to see its details like request/response headers.
+</pre>
 <div class="w3-row w3-padding-64">
     <div class="w3-twothird w3-container">
-        <h3 class="w3-text-blue">Get call.</h3>
+        <h3 class="w3-text-blue">Get call to return mailboxes.</h3>
         <label for="get">Will make a cross domain request, but no preflight request.</label>
     </div>
     <div class="w3-third w3-container">
@@ -52,13 +75,13 @@
 </div>
 <div class="w3-row w3-padding-64">
     <div class="w3-twothird w3-container">
-        <h3 class="w3-text-blue">Post call (Cache age is 1 minute)</h3>
+        <h3 class="w3-text-blue">Post call to save a sample message (Cache age is 1 minute)</h3>
         <label for="content">Application/json content type (Makes a preflight request) </label>
         <input class="w3-check" id="content" type="checkbox"/>
     </div>
     <div class="w3-twothird w3-container">
-        <label for="mailbox">Mailbox ID: </label>
-        <input class="w3-input w3-border-black" id="mailbox" type="text"/>
+        <label for="mailbox">Mailbox ID (Obtain your mailbox ID by doing get mailboxes): </label>
+        <input class="w3-input w3-border-black" id="mailbox" type="text" autocomplete="on"/>
     </div>
     <div class="w3-third w3-container">
         <input class="w3-button w3-padding-large w3-padding-32 w3-center w3-theme-light" id="post" type="button" value="Do A Post Save Message Call"
