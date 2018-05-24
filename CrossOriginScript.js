@@ -1,4 +1,26 @@
 /**
+ * Method to get wss id.
+ */
+function getWssId() {
+    var hasCookie = document.getElementById("cookie").checked;
+    if (!hasCookie) {
+        alert("WSS ID will not be present without cookie.");
+        return;
+    }
+
+    var isBrowserOld = document.getElementById("old").checked;
+    if (!isBrowserOld) {
+        var params = {
+            mode: 'cors'
+        };
+        addCredentials(params);
+        fetch(getUrl('', true), params).then(logResponse).then(extractWssId).catch(logError);
+    } else {
+        createCORSOldBrowserRequest('GET', getUrl('', true));
+    }
+}
+
+/**
  * Method to do a GET on mailboxes API.
  */
 function doGet() {
@@ -8,7 +30,7 @@ function doGet() {
             mode: 'cors'
         };
         addCredentials(params);
-        fetch(getUrl(), params).then(logResponse).then(logJson).catch(logError);
+        fetch(getUrl(), params).then(logResponse).then(extractMailboxId).catch(logError);
     } else {
         createCORSOldBrowserRequest('GET', getUrl());
     }
@@ -85,6 +107,7 @@ function doPost() {
     var data = new FormData();
     data.append("json", JSON.stringify(payload));
     var isJson = document.getElementById("content").checked;
+    var path = '/@id==' + document.getElementById("mailbox").value + '/messages';
     var isBrowserOld = document.getElementById("old").checked;
     if (!isBrowserOld) {
         var headers = {};
@@ -101,12 +124,9 @@ function doPost() {
             headers: headers
         };
         addCredentials(params);
-
-        var path = '/@id==' + document.getElementById("mailbox").value + '/messages';
-        fetch(getUrl(path), params)
-            .then(logResponse).then(logJson).catch(logError);
+        fetch(getUrl(path), params).then(logResponse).then(logJson).catch(logError);
     } else {
-        createCORSOldBrowserRequest('POST', url, isJson, data);
+        createCORSOldBrowserRequest('POST', getUrl(path), isJson, data);
     }
 }
 
@@ -189,9 +209,10 @@ function createCORSOldBrowserRequest(method, url, preflight, data) {
  * Gets url based on production checkbox, path and wss id provided.
  *
  * @param path Path to append after mailboxes path. Null means the url will be mailboxes path.
+ * @param skipWssIdCheck boolean to indicate to skip checking if wss id is present.
  * @returns {string}
  */
-function getUrl(path) {
+function getUrl(path, skipWssIdCheck) {
     var isProd = document.getElementById("prod").checked;
     var wss = document.getElementById("wss").value;
     var url = null;
@@ -206,6 +227,9 @@ function getUrl(path) {
     url += '?appid=yahoomailneo';
     if (wss !== '') {
         url += '&wssid=' + wss;
+    } else if (skipWssIdCheck == undefined || !skipWssIdCheck) {
+        alert('Please get WSS ID first.');
+        return '';
     }
     return url;
 }
@@ -223,28 +247,79 @@ function logResponse(response) {
         console.log('Status-Text: ' + response.statusText);
         console.log('Type: ' + response.type);
         console.log('URL: ' + response.url);
+
+        // Set green for 2xx and red otherwise in output text
+        var outputText = document.getElementById('json');
+        if (response.status >= 200 && response.status < 300) {
+            outputText.classList.remove('w3-text-red');
+            outputText.classList.add('w3-text-green');
+        } else {
+            outputText.classList.add('w3-text-red');
+            outputText.classList.remove('w3-text-green');
+        }
         return response.json();
     }
 }
 
 /**
- * Logs content as json. Chained after logResponse.
+ * Logs and displays content as json. Chained after logResponse.
  *
  * @param json JSON object.
  */
 function logJson(json) {
     if (json) {
-        console.log('Content: ' + JSON.stringify(json));
+        var jsonString = JSON.stringify(json, null, 4);
+        console.log('Content: ' + jsonString);
+        var output = document.getElementById('output');
+        if (jsonString != undefined && jsonString !== '') {
+            output.classList.remove('w3-hide');
+            document.getElementById('json').innerText = jsonString;
+        } else {
+            hideOutput();
+        }
     }
 }
 
 /**
- * Logs error in console.
+ * Extracts wss id and sets it in the text box. Chained after logResponse.
+ *
+ * @param json JSON object.
+ */
+function extractWssId(json) {
+    if (json) {
+        logJson(json);
+        document.getElementById('wss').value = json['error']['details']['wssid'];
+    }
+}
+
+/**
+ * Extracts mailbox id and sets it in the text box. Chained after logResponse.
+ *
+ * @param json JSON object.
+ */
+function extractMailboxId(json) {
+    if (json) {
+        logJson(json);
+        document.getElementById('mailbox').value = json['result']['mailboxes'][0]['id'];
+    }
+}
+
+/**
+ * Logs error in console and displays it on the page.
  *
  * @param error Error object.
  */
 function logError(error) {
-    console.log(error.message);
+    console.log('Error: ' + error.message);
+    var outputText = document.getElementById('json');
+    outputText.classList.add('w3-text-red');
+    outputText.classList.remove('w3-text-green');
+    if (error.message != undefined && error.message !== '') {
+        document.getElementById('output').classList.remove('w3-hide');
+        outputText.innerText = 'Error: ' + error.message;
+    } else {
+        hideOutput();
+    }
 }
 
 /**
@@ -257,4 +332,11 @@ function addCredentials(params) {
     if (hasCookie) {
         params.credentials = 'include';
     }
+}
+
+/**
+ * Hides the output area.
+ */
+function hideOutput() {
+    document.getElementById('output').classList.add('w3-hide');
 }
